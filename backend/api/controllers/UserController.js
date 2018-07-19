@@ -70,18 +70,18 @@ module.exports = {
 
     'verifyqr': function(req, res) {
         const date = new Date();
-
-        if (req.body.validTrough < date) {
-            User.findOne({
-                email: req.body.qr
-            }).exec(function(user, err) {
-                if (err) {
-                    res.badRequest({ err: 'The given code is not valid'});
-                }
-            });
-        } else {
-            res.badRequest({ err: 'The given code is not valid' });
-        }
+        console.log(req.body);
+        // if (req.body.validTrough < date) {
+        //     User.findOne({
+        //         email: req.body.qr.email
+        //     }).exec(function(user, err) {
+        //         if (err) {
+        //             res.badRequest({ err: 'The given code is not valid'});
+        //         }
+        //     });
+        // } else {
+        //     res.badRequest({ err: 'The given code is not valid' });
+        // }
     }
 
 };

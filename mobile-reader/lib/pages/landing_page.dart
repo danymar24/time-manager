@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 
 class LandingPage extends StatefulWidget {
   @override
@@ -50,7 +51,8 @@ class _LandingPageState extends State<LandingPage> {
     try {
       String barcode = await BarcodeScanner.scan();
       print(barcode);
-      setState(() => this.barcode = barcode);
+      verifyCode(barcode);
+      // setState(() => this.barcode = barcode);
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
         setState(() {
@@ -64,5 +66,20 @@ class _LandingPageState extends State<LandingPage> {
     } catch (e) {
       setState(() => this.barcode = 'Unknown error: $e');
     }
+  }
+
+  verifyCode(String code) async {
+    var url = 'http://10.0.2.2:1337/user/verifyqr';
+    http.post(
+      url, 
+      headers: {
+        'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImVuY3JpcHRlZFBhc3N3b3JkIjoiIiwiY3JlYXRlZEF0IjoxNTMxOTQ0NzU3ODQ5LCJ1cGRhdGVkQXQiOjE1MzE5NDQ3NTc4NDksImlkIjoxLCJmaXJzdG5hbWUiOiJEYW5pZWwiLCJsYXN0bmFtZSI6IlJkeiIsImVtYWlsIjoiZGFueW1hcjI0QGdtYWlsLmNvbSJ9LCJpYXQiOjE1MzIwMTM5MDUsImV4cCI6MTUzMjYxODcwNX0.i_tjsyFg69auteKvSernC6UmiBeqCWcbfurBs7eTxCA'
+      },
+      body: code )
+        .then((response) {
+
+          print(response);
+          return response;
+        });
   }
 }
