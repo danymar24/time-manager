@@ -11,10 +11,21 @@ class LandingPage extends StatefulWidget {
 class _LandingPageState extends State<LandingPage> {
 
   String barcode = "";
+  DateTime date = new DateTime.now();
+  String time;
+  Timer timer;
 
   @override   
   void initState() {
+    const fiveSec = const Duration(seconds: 5);
     super.initState();
+    time = "${date.hour}:${date.minute}";
+    timer = new Timer.periodic(fiveSec, (Timer t) {
+      setState(() {
+        date = new DateTime.now();
+        time = "${date.hour}:${date.minute}";
+      });
+    });
   }
 
   @override
@@ -26,7 +37,8 @@ class _LandingPageState extends State<LandingPage> {
         child: new Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            new Text("Scan QR code:", style: new TextStyle(color: Colors.white, fontSize: 50.0, fontWeight: FontWeight.bold)),
+            new Text(time, style: new TextStyle(color: Colors.white, fontSize: 100.0, fontWeight: FontWeight.bold)),
+            new Text("Scan QR code:", style: new TextStyle(color: Colors.white, fontSize: 30.0, fontWeight: FontWeight.bold)),
             new Text(barcode),
           ],
         ),
