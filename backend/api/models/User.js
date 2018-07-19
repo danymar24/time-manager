@@ -26,7 +26,7 @@ module.exports = {
       required: true
     },
 
-    'encriptedPassword': {
+    'encryptedPassword': {
       type: 'string'
     },
 

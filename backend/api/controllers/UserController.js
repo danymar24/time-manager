@@ -5,6 +5,9 @@
  * @help        :: See https://sailsjs.com/docs/concepts/actions
  */
 
+const bcrypt = require('bcrypt-nodejs');
+const QRCode = require('qrcode');
+
 module.exports = {
   
     'signup': function(req, res) {
@@ -36,12 +39,49 @@ module.exports = {
 
             bcrypt.compare(req.body.password, user.encryptedPassword, function(err, result) {
                 if (result) {
-                    return res.json(user);
+                    delete user.encryptedPassword;
+                    return res.json({
+                        user,
+                        token: jwToken.sign(user)
+                    });
                 } else {
                     return res.forbidden({ err: 'Email and password combination do not match'});
                 }
             });
         });
+    },
+
+    'check': function(req, res) {
+        return res.json();
+    },
+
+    'getqr': function(req, res) {
+        const date = new Date();
+        let code = {
+            validTrough: new Date(date.getTime() + 5 * 60000),
+            email: req.body.email
+        }
+        QRCode.toDataURL(JSON.stringify(code), function (err, url) {
+            return res.json({
+                url
+            });
+        });
+    },
+
+    'verifyqr': function(req, res) {
+        const date = new Date();
+
+        if (req.body.validTrough < date) {
+            User.findOne({
+                email: req.body.qr
+            }).exec(function(user, err) {
+                if (err) {
+                    res.badRequest({ err: 'The given code is not valid'});
+                }
+            });
+        } else {
+            res.badRequest({ err: 'The given code is not valid' });
+        }
     }
 
 };
