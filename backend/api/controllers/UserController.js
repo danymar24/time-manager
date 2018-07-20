@@ -58,7 +58,7 @@ module.exports = {
     'getqr': function(req, res) {
         const date = new Date();
         let code = {
-            validTrough: new Date(date.getTime() + 5 * 60000),
+            validTrough: new Date(date.getTime() + 60 * 60000),
             email: req.body.email
         }
         QRCode.toDataURL(JSON.stringify(code), function (err, url) {
@@ -70,18 +70,24 @@ module.exports = {
 
     'verifyqr': function(req, res) {
         const date = new Date();
-        console.log(req.body);
-        // if (req.body.validTrough < date) {
-        //     User.findOne({
-        //         email: req.body.qr.email
-        //     }).exec(function(user, err) {
-        //         if (err) {
-        //             res.badRequest({ err: 'The given code is not valid'});
-        //         }
-        //     });
-        // } else {
-        //     res.badRequest({ err: 'The given code is not valid' });
-        // }
+        const validTrough = new Date(req.body.validTrough)
+
+        if (validTrough.getTime() > date.getTime()) {
+            console.log(req.body.email);
+            User.findOne({
+                email: req.body.email
+            }).exec(function(err, user) {
+                if (err) {
+                    res.badRequest({ err: 'The given code is not valid'});
+                }
+                console.log(user);
+                res.json(user);
+            });
+        } else {
+            console.log('invalid date');
+
+            res.badRequest({ err: 'The given code is not valid' });
+        }
     }
 
 };

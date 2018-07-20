@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:date_format/date_format.dart';
 
 class LandingPage extends StatefulWidget {
   @override
@@ -20,7 +21,7 @@ class _LandingPageState extends State<LandingPage> {
   void initState() {
     const fiveSec = const Duration(seconds: 5);
     super.initState();
-    time = "${date.hour}:${date.minute}";
+    time = "${date.hour}:${date.}";
     timer = new Timer.periodic(fiveSec, (Timer t) {
       setState(() {
         date = new DateTime.now();
@@ -47,10 +48,13 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
+  scanCode() {
+    
+  }
+
   Future scan() async {
     try {
       String barcode = await BarcodeScanner.scan();
-      print(barcode);
       verifyCode(barcode);
       // setState(() => this.barcode = barcode);
     } on PlatformException catch (e) {
